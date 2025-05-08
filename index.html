@@ -77,7 +77,7 @@
     const messagesDiv = document.getElementById('messages');
     const inputField = document.getElementById('input');
 
-    const ws = new WebSocket(`ws://${location.host}`);
+    const ws = new WebSocket(`wws://swlws.site/chat}`);
 
     ws.onopen = () => {
       addMessage('🔌 Connected to server');
