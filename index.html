@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>WebSocket Chat</title>
+  <title>WebSocket</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -64,7 +64,7 @@
 </head>
 <body>
   <header>
-    WebSocket Chat | Online: <span id="client-count">0</span>
+    Online: <span id="client-count">0</span>
   </header>
   <div id="messages"></div>
   <div id="input-area">
@@ -77,7 +77,7 @@
     const messagesDiv = document.getElementById('messages');
     const inputField = document.getElementById('input');
 
-    const ws = new WebSocket(`wws://swlws.site/chat}`);
+    const ws = new WebSocket(`wss://swlws.site/chat`);
 
     ws.onopen = () => {
       addMessage('🔌 Connected to server');
