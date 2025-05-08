@@ -216,7 +216,8 @@
       const ws = new WebSocket(`wss://swlws.site/chat`);
 
       ws.onopen = () => {
-        addMessage('🔌 Connected to server');
+        addMessage('🔌 已连接到服务器');
+        addMessage('💡 说明：\n• 任意键聚焦输入框\n• 按 ESC 清空聊天记录');
       };
 
       ws.onmessage = (event) => {
