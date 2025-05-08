@@ -123,6 +123,6 @@ wss.on('connection', handleNewConnection);
 
 // console.log('WebSocket server is running on port 8080');
 // 启动 HTTP + WS 服务
-server.listen(8080, () => {
+server.listen(1122, () => {
   console.log('Server running at http://localhost:8080');
 });
