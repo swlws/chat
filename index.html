@@ -139,7 +139,7 @@
       function sendMessage() {
         // 优先使用 textarea 的输入
         const text =
-          textareaField.style.display === 'block'
+          window.getComputedStyle(textareaField).display === 'block'
             ? textareaField.value.trim()
             : inputField.value.trim();
         if (!text) return;
@@ -151,7 +151,7 @@
         ws.send(JSON.stringify(message));
         addMessage(`🧑 You: ${text}`);
         // 清空当前使用的输入框
-        if (textareaField.style.display === 'block') {
+        if (window.getComputedStyle(textareaField).display === 'block') {
           textareaField.value = '';
         } else {
           inputField.value = '';
@@ -202,7 +202,7 @@
             document.activeElement.tagName
           )
         ) {
-          if (textareaField.style.display === 'block') {
+          if (window.getComputedStyle(textareaField).display === 'block') {
             textareaField.focus();
           } else {
             inputField.focus();
