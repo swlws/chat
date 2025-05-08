@@ -194,6 +194,17 @@
       ::-webkit-scrollbar-thumb:hover {
         background: rgba(0,0,0,0.3);
       }
+
+      /* 添加标题闪烁动画 */
+      @keyframes titleBlink {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+      }
+
+      .title-blink {
+        animation: titleBlink 1s infinite;
+      }
     </style>
   </head>
   <body>
@@ -212,6 +223,8 @@
       const clientCountSpan = document.getElementById('client-count');
       const messagesDiv = document.getElementById('messages');
       const textareaField = document.getElementById('input-textarea');
+      let originalTitle = document.title;
+      let hasUnread = false;
 
       // 检查是否是第一次访问
       const isFirstVisit = !localStorage.getItem('chatHasVisited');
@@ -235,6 +248,12 @@
           clientCountSpan.textContent = msg.count;
         } else if (msg.type === 'chat') {
           addMessage(`💬 ${msg.content}`);
+          
+          // 如果页面处于隐藏状态，显示提醒
+          if (document.hidden) {
+            hasUnread = true;
+            document.title = '🔴 ' + originalTitle;
+          }
         }
       };
 
@@ -302,6 +321,14 @@
           )
         ) {
           textareaField.focus();
+        }
+      });
+      // 检查页面可见性变化
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          // 页面重新激活时，恢复原始标题
+          document.title = originalTitle;
+          hasUnread = false;
         }
       });
     </script>
