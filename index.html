@@ -261,41 +261,64 @@
       const textareaField = document.getElementById('input-textarea');
       let originalTitle = document.title;
       let hasUnread = false;
+      let ws = null;  // 将 ws 变量改为可重新赋值
+      let reconnectTimer = null;  // 用于存储重连定时器
+
+      // 创建 WebSocket 连接的函数
+      function createWebSocket() {
+        ws = new WebSocket(`wss://swlws.site/chat`);
+
+        ws.onopen = () => {
+          addMessage('🔌 已连接到服务器');
+          
+          // 清除重连定时器
+          if (reconnectTimer) {
+            clearInterval(reconnectTimer);
+            reconnectTimer = null;
+          }
+          
+          // 只在第一次访问时显示说明
+          if (isFirstVisit) {
+            addMessage('💡 说明：\n• 任意键聚焦输入框\n• 按 ESC 清空聊天记录');
+            // 标记已访问
+            localStorage.setItem('chatHasVisited', 'true');
+          }
+        };
+
+        ws.onmessage = (event) => {
+          const msg = JSON.parse(event.data);
+          if (msg.type === 'clientCount') {
+            clientCountSpan.textContent = msg.count;
+          } else if (msg.type === 'chat') {
+            addMessage(`💬 ${msg.content}`);
+            
+            // 如果页面处于隐藏状态，显示提醒
+            if (document.hidden) {
+              hasUnread = true;
+              document.title = '🔴 ' + originalTitle;
+            }
+          }
+        };
+
+        ws.onclose = () => {
+          addMessage('❌ 已断开连接，正在尝试重连...');
+          
+          // 设置重连定时器
+          if (!reconnectTimer) {
+            reconnectTimer = setInterval(() => {
+              if (ws.readyState === WebSocket.CLOSED) {
+                createWebSocket();
+              }
+            }, 3000);  // 每3秒尝试重连一次
+          }
+        };
+      }
 
       // 检查是否是第一次访问
       const isFirstVisit = !localStorage.getItem('chatHasVisited');
       
-      const ws = new WebSocket(`wss://swlws.site/chat`);
-
-      ws.onopen = () => {
-        addMessage('🔌 已连接到服务器');
-        
-        // 只在第一次访问时显示说明
-        if (isFirstVisit) {
-          addMessage('💡 说明：\n• 任意键聚焦输入框\n• 按 ESC 清空聊天记录');
-          // 标记已访问
-          localStorage.setItem('chatHasVisited', 'true');
-        }
-      };
-
-      ws.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
-        if (msg.type === 'clientCount') {
-          clientCountSpan.textContent = msg.count;
-        } else if (msg.type === 'chat') {
-          addMessage(`💬 ${msg.content}`);
-          
-          // 如果页面处于隐藏状态，显示提醒
-          if (document.hidden) {
-            hasUnread = true;
-            document.title = '🔴 ' + originalTitle;
-          }
-        }
-      };
-
-      ws.onclose = () => {
-        addMessage('❌ 已断开连接');
-      };
+      // 初始化连接
+      createWebSocket();
 
       function sendMessage() {
         const text = textareaField.value.trim();
