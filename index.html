@@ -276,7 +276,7 @@
           content: text,
         };
         ws.send(JSON.stringify(message));
-        addMessage(`🧑 : ${text}`);
+        addMessage(`👤 ${text}`);
         textareaField.value = '';
       }
 
@@ -284,7 +284,7 @@
         const div = document.createElement('div');
         div.textContent = text;
         // 如果消息是自己发送的，添加data-self属性
-        if (text.startsWith('🧑 :')) {
+        if (text.startsWith('👤')) {
           div.setAttribute('data-self', 'true');
         }
         messagesDiv.appendChild(div);
