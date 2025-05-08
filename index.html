@@ -3,7 +3,7 @@
   <head>
     <title>swlws</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="icon" href="https://www.github.com/swlws.png" />
     <style>
       body {
@@ -40,18 +40,21 @@
       #input-area {
         display: flex;
         border-top: 1px solid #ccc;
+        gap: 2px;
       }
 
-      #input-area input,
       #input-area textarea {
-        flex: 1;
+        flex: 1; /* PC端占满宽度 */
         padding: 0.75rem;
         font-size: 1rem;
         border: none;
         outline: none;
+        resize: none;
+        height: 5em;
       }
 
       #input-area button {
+        display: none; /* PC端默认隐藏按钮 */
         padding: 0.75rem 1rem;
         font-size: 1rem;
         border: none;
@@ -62,11 +65,6 @@
 
       #input-area button:hover {
         background: #0056b3;
-      }
-
-      /* 隐藏默认 textarea */
-      #input-textarea {
-        display: none;
       }
 
       /* 移动端媒体查询 */
@@ -80,18 +78,16 @@
           padding: 0.5rem;
         }
 
-        #input-area input {
-          display: none;
-        }
-
         #input-area textarea {
-          display: block;
+          flex: 1.618; /* 移动端使用黄金分割比 */
           padding: 0.5rem;
           font-size: 0.9rem;
-          height: 5em; /* 默认 5 行 */
+          height: 5em;
         }
 
         #input-area button {
+          display: block; /* 移动端显示按钮 */
+          flex: 1;
           padding: 0.5rem 0.75rem;
           font-size: 0.9rem;
         }
@@ -102,11 +98,10 @@
     <header>Online: <span id="client-count">0</span></header>
     <div id="messages"></div>
     <div id="input-area">
-      <input type="text" id="input" placeholder="Type a message..." />
       <textarea
         id="input-textarea"
         placeholder="Type a message..."
-        rows="5"
+        rows="1"
       ></textarea>
       <button onclick="sendMessage()">Send</button>
     </div>
@@ -114,7 +109,6 @@
     <script>
       const clientCountSpan = document.getElementById('client-count');
       const messagesDiv = document.getElementById('messages');
-      const inputField = document.getElementById('input');
       const textareaField = document.getElementById('input-textarea');
 
       const ws = new WebSocket(`wss://swlws.site/chat`);
@@ -137,11 +131,7 @@
       };
 
       function sendMessage() {
-        // 优先使用 textarea 的输入
-        const text =
-          window.getComputedStyle(textareaField).display === 'block'
-            ? textareaField.value.trim()
-            : inputField.value.trim();
+        const text = textareaField.value.trim();
         if (!text) return;
 
         const message = {
@@ -150,12 +140,7 @@
         };
         ws.send(JSON.stringify(message));
         addMessage(`🧑 You: ${text}`);
-        // 清空当前使用的输入框
-        if (window.getComputedStyle(textareaField).display === 'block') {
-          textareaField.value = '';
-        } else {
-          inputField.value = '';
-        }
+        textareaField.value = '';
       }
 
       function addMessage(text) {
@@ -172,13 +157,6 @@
       }
 
       // Enter 键发送消息
-      inputField.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
-        }
-      });
-
       textareaField.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
@@ -196,17 +174,12 @@
 
         // 如果当前焦点不在输入框上，且不是在输入其他表单元素中
         if (
-          document.activeElement !== inputField &&
           document.activeElement !== textareaField &&
           !['INPUT', 'TEXTAREA', 'SELECT'].includes(
             document.activeElement.tagName
           )
         ) {
-          if (window.getComputedStyle(textareaField).display === 'block') {
-            textareaField.focus();
-          } else {
-            inputField.focus();
-          }
+          textareaField.focus();
         }
       });
     </script>
