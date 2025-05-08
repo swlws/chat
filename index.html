@@ -230,12 +230,18 @@
       };
 
       ws.onclose = () => {
-        addMessage('❌ Disconnected from server');
+        addMessage('❌ 已断开连接');
       };
 
       function sendMessage() {
         const text = textareaField.value.trim();
         if (!text) return;
+
+        // 检查连接状态
+        if (ws.readyState !== WebSocket.OPEN) {
+          addMessage('❌ 已断开连接，请刷新页面重试');
+          return;
+        }
 
         const message = {
           type: 'chat',
