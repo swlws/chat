@@ -213,11 +213,20 @@
       const messagesDiv = document.getElementById('messages');
       const textareaField = document.getElementById('input-textarea');
 
+      // 检查是否是第一次访问
+      const isFirstVisit = !localStorage.getItem('chatHasVisited');
+      
       const ws = new WebSocket(`wss://swlws.site/chat`);
 
       ws.onopen = () => {
         addMessage('🔌 已连接到服务器');
-        addMessage('💡 说明：\n• 任意键聚焦输入框\n• 按 ESC 清空聊天记录');
+        
+        // 只在第一次访问时显示说明
+        if (isFirstVisit) {
+          addMessage('💡 说明：\n• 任意键聚焦输入框\n• 按 ESC 清空聊天记录');
+          // 标记已访问
+          localStorage.setItem('chatHasVisited', 'true');
+        }
       };
 
       ws.onmessage = (event) => {
