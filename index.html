@@ -1,455 +1,594 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>小廖说...</title>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <link rel="icon" href="https://www.github.com/swlws.png" />
 
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="一个简单的在线聊天室，支持实时消息交互" />
-    <meta name="keywords" content="聊天室,在线聊天,WebSocket,实时通信" />
-    <meta name="author" content="swlws" />
+<head>
+  <title>小廖说...</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="icon" href="https://www.github.com/swlws.png" />
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Room - 在线聊天室" />
-    <meta
-      property="og:description"
-      content="一个简单的在线聊天室，支持实时消息交互"
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://swlws.site/chat" />
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="一个简单的在线聊天室，支持实时消息交互" />
+  <meta name="keywords" content="聊天室,在线聊天,WebSocket,实时通信" />
+  <meta name="author" content="swlws" />
 
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Room - 在线聊天室" />
-    <meta
-      name="twitter:description"
-      content="一个简单的在线聊天室，支持实时消息交互"
-    />
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Room - 在线聊天室" />
+  <meta property="og:description" content="一个简单的在线聊天室，支持实时消息交互" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://swlws.site/chat" />
 
-    <!-- 主题色 -->
-    <meta name="theme-color" content="#2c3e50" />
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Room - 在线聊天室" />
+  <meta name="twitter:description" content="一个简单的在线聊天室，支持实时消息交互" />
 
-    <!-- 微信分享标签 -->
-    <meta itemprop="name" content="Room - 在线聊天室" />
-    <meta
-      itemprop="description"
-      content="一个简单的在线聊天室，支持实时消息交互"
-    />
-    <meta itemprop="image" content="https://www.github.com/swlws.png" />
+  <!-- 主题色 -->
+  <meta name="theme-color" content="#2c3e50" />
 
-    <!-- 微信浏览器配置 -->
-    <meta name="weixin:timeline_title" content="Room - 在线聊天室" />
-    <meta name="weixin:chat_title" content="Room - 在线聊天室" />
-    <meta
-      name="weixin:description"
-      content="一个简单的在线聊天室，支持实时消息交互"
-    />
-    <meta name="weixin:image" content="https://www.github.com/swlws.png" />
+  <!-- 微信分享标签 -->
+  <meta itemprop="name" content="Room - 在线聊天室" />
+  <meta itemprop="description" content="一个简单的在线聊天室，支持实时消息交互" />
+  <meta itemprop="image" content="https://www.github.com/swlws.png" />
 
-    <!-- 添加微信安全验证标签 -->
-    <meta name="weixin:security_verify" content="true" />
-    <meta name="weixin:verify" content="weixin" />
-    <meta name="weixin:safe" content="true" />
+  <!-- 微信浏览器配置 -->
+  <meta name="weixin:timeline_title" content="Room - 在线聊天室" />
+  <meta name="weixin:chat_title" content="Room - 在线聊天室" />
+  <meta name="weixin:description" content="一个简单的在线聊天室，支持实时消息交互" />
+  <meta name="weixin:image" content="https://www.github.com/swlws.png" />
 
-    <style>
+  <!-- 添加微信安全验证标签 -->
+  <meta name="weixin:security_verify" content="true" />
+  <meta name="weixin:verify" content="weixin" />
+  <meta name="weixin:safe" content="true" />
+
+  <style>
+    :root {
+      --primary-color: #4a90e2;
+      --bg-color: #f5f7fa;
+      --header-bg: #2c3e50;
+      --message-bg: #ffffff;
+      --message-self-bg: #f0f7ff;
+      --border-radius: 12px;
+      --spacing: 1rem;
+      --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: '楷体', 'KaiTi', 'STKaiti', Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: var(--bg-color);
+      color: #2c3e50;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: var(--header-bg);
+      color: white;
+      padding: var(--spacing);
+      text-align: center;
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 1;
+    }
+
+    #client-count {
+      font-weight: bold;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 0.3em 0.8em;
+      border-radius: 20px;
+      font-size: 0.9em;
+      backdrop-filter: blur(4px);
+    }
+
+    #messages {
+      flex: 1;
+      padding: var(--spacing);
+      overflow-y: auto;
+      background: var(--bg-color);
+      scroll-behavior: smooth;
+    }
+
+    #messages div {
+      margin-bottom: 0.4rem;
+      padding: 0.4rem;
+      background: var(--message-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      word-break: break-word;
+      width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      animation: fadeIn 0.3s ease;
+      /* display: flex;
+        align-items: center; */
+    }
+
+    .message-content {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .message-time {
+      float: left;
+      padding: 2px 4px;
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 2px;
+      font-family: Arial, sans-serif;
+    }
+
+    #messages div:last-child {
+      margin-bottom: 0.5rem;
+    }
+
+    #messages div[data-self='true'] {
+      background: var(--message-self-bg);
+      margin-left: auto;
+      border-top-right-radius: 4px;
+    }
+
+    #input-area {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      background: var(--message-bg);
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 1;
+    }
+
+    #input-area textarea {
+      flex: 1;
+      padding: 1rem;
+      font-size: 1rem;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--border-radius);
+      outline: none;
+      resize: none;
+      height: 5em;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    #input-area textarea:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+      background: #ffffff;
+    }
+
+    #input-area button {
+      display: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: var(--border-radius);
+      background: var(--primary-color);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    #input-area button:hover {
+      background: #357abd;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+    }
+
+    #input-area button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 移动端媒体查询 */
+    @media(max-width: 768px) {
       :root {
-        --primary-color: #4a90e2;
-        --bg-color: #f5f7fa;
-        --header-bg: #2c3e50;
-        --message-bg: #ffffff;
-        --message-self-bg: #f0f7ff;
-        --border-radius: 12px;
-        --spacing: 1rem;
-        --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      body {
-        font-family: '楷体', 'KaiTi', 'STKaiti', Arial, sans-serif;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        background-color: var(--bg-color);
-        color: #2c3e50;
-        line-height: 1.6;
-      }
-
-      header {
-        background-color: var(--header-bg);
-        color: white;
-        padding: var(--spacing);
-        text-align: center;
-        box-shadow: var(--shadow);
-        position: relative;
-        z-index: 1;
-      }
-
-      #client-count {
-        font-weight: bold;
-        background: rgba(255, 255, 255, 0.15);
-        padding: 0.3em 0.8em;
-        border-radius: 20px;
-        font-size: 0.9em;
-        backdrop-filter: blur(4px);
-      }
-
-      #messages {
-        flex: 1;
-        padding: var(--spacing);
-        overflow-y: auto;
-        background: var(--bg-color);
-        scroll-behavior: smooth;
+        --spacing: 0.5rem;
+        --border-radius: 8px;
       }
 
       #messages div {
-        margin-bottom: 0.4rem;
+        max-width: 100%;
         padding: 0.4rem;
-        background: var(--message-bg);
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow);
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        word-break: break-word;
-        width: 100%;
-        box-sizing: border-box;
-        position: relative;
-        animation: fadeIn 0.3s ease;
-        /* display: flex;
-        align-items: center; */
-      }
-
-      .message-content {
-        display: block;
-        margin-bottom: 2px;
+        margin-bottom: 0.4rem;
       }
 
       .message-time {
-        float: left;
-        padding: 2px 4px;
-        font-size: 0.75rem;
-        color: #999;
-        margin-top: 2px;
-        font-family: Arial, sans-serif;
-      }
-
-      #messages div:last-child {
-        margin-bottom: 0.5rem;
-      }
-
-      #messages div[data-self='true'] {
-        background: var(--message-self-bg);
-        margin-left: auto;
-        border-top-right-radius: 4px;
+        font-size: 0.7rem;
+        margin-top: 1px;
       }
 
       #input-area {
-        display: flex;
-        gap: 12px;
-        padding: 12px;
-        background: var(--message-bg);
-        box-shadow: var(--shadow);
-        position: relative;
-        z-index: 1;
+        padding: 8px;
       }
 
       #input-area textarea {
-        flex: 1;
-        padding: 1rem;
-        font-size: 1rem;
-        border: 2px solid rgba(0, 0, 0, 0.1);
-        border-radius: var(--border-radius);
-        outline: none;
-        resize: none;
-        height: 5em;
-        transition: all 0.3s ease;
-        font-family: inherit;
-        background: rgba(255, 255, 255, 0.8);
-      }
-
-      #input-area textarea:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-        background: #ffffff;
+        flex: 1.618;
+        padding: 0.8rem;
+        font-size: 0.95rem;
       }
 
       #input-area button {
-        display: none;
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        border: none;
-        border-radius: var(--border-radius);
-        background: var(--primary-color);
-        color: white;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: inherit;
+        display: block;
+        flex: 1;
+        padding: 0.8rem;
+        font-size: 0.95rem;
+      }
+    }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* 添加标题闪烁动画 */
+    @keyframes titleBlink {
+      0% {
+        opacity: 1;
       }
 
-      #input-area button:hover {
-        background: #357abd;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+      50% {
+        opacity: 0.5;
       }
 
-      #input-area button:active {
-        transform: translateY(0);
-        box-shadow: none;
+      100% {
+        opacity: 1;
       }
+    }
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
+    .title-blink {
+      animation: titleBlink 1s infinite;
+    }
+  </style>
+</head>
+
+<body>
+  <header>Online:
+    <span id="client-count">0</span>
+  </header>
+  <div id="messages"></div>
+  <div id="input-area">
+    <textarea id="input-textarea" placeholder="Type a message..." rows="1"></textarea>
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const clientCountSpan = document.getElementById('client-count');
+    const messagesDiv = document.getElementById('messages');
+    const textareaField = document.getElementById('input-textarea');
+    let originalTitle = document.title;
+    let hasUnread = false;
+    let ws = null; // 将 ws 变量改为可重新赋值
+    let reconnectTimer = null;
+    // 用于存储重连定时器
+
+    // 创建 WebSocket 连接的函数
+    function createWebSocket() {
+      ws = new WebSocket(`wss://swlws.site/chat`);
+
+      ws.onopen = () => {
+        addMessage('🔌 已连接到服务器');
+
+        // 清除重连定时器
+        if (reconnectTimer) {
+          clearInterval(reconnectTimer);
+          reconnectTimer = null;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+
+        // 只在第一次访问时显示说明
+        if (isFirstVisit) {
+          addMessage('💡 说明：\n• 任意键聚焦输入框\n• 按 ESC 清空聊天记录');
+          // 标记已访问
+          localStorage.setItem('chatHasVisited', 'true');
         }
-      }
+      };
 
-      /* 移动端媒体查询 */
-      @media (max-width: 768px) {
-        :root {
-          --spacing: 0.5rem;
-          --border-radius: 8px;
-        }
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        if (msg.type === 'clientCount') {
+          clientCountSpan.textContent = msg.count;
+        } else if (msg.type === 'chat') {
+          addMessage(`💬 ${msg.content
+            }`);
 
-        #messages div {
-          max-width: 100%;
-          padding: 0.4rem;
-          margin-bottom: 0.4rem;
-        }
-
-        .message-time {
-          font-size: 0.7rem;
-          margin-top: 1px;
-        }
-
-        #input-area {
-          padding: 8px;
-        }
-
-        #input-area textarea {
-          flex: 1.618;
-          padding: 0.8rem;
-          font-size: 0.95rem;
-        }
-
-        #input-area button {
-          display: block;
-          flex: 1;
-          padding: 0.8rem;
-          font-size: 0.95rem;
-        }
-      }
-
-      /* 自定义滚动条 */
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 0, 0, 0.3);
-      }
-
-      /* 添加标题闪烁动画 */
-      @keyframes titleBlink {
-        0% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
-
-      .title-blink {
-        animation: titleBlink 1s infinite;
-      }
-    </style>
-  </head>
-  <body>
-    <header>Online: <span id="client-count">0</span></header>
-    <div id="messages"></div>
-    <div id="input-area">
-      <textarea
-        id="input-textarea"
-        placeholder="Type a message..."
-        rows="1"
-      ></textarea>
-      <button onclick="sendMessage()">Send</button>
-    </div>
-
-    <script>
-      const clientCountSpan = document.getElementById('client-count');
-      const messagesDiv = document.getElementById('messages');
-      const textareaField = document.getElementById('input-textarea');
-      let originalTitle = document.title;
-      let hasUnread = false;
-      let ws = null; // 将 ws 变量改为可重新赋值
-      let reconnectTimer = null; // 用于存储重连定时器
-
-      // 创建 WebSocket 连接的函数
-      function createWebSocket() {
-        ws = new WebSocket(`wss://swlws.site/chat`);
-
-        ws.onopen = () => {
-          addMessage('🔌 已连接到服务器');
-
-          // 清除重连定时器
-          if (reconnectTimer) {
-            clearInterval(reconnectTimer);
-            reconnectTimer = null;
+          // 如果页面处于隐藏状态，显示提醒
+          if (document.hidden) {
+            hasUnread = true;
+            document.title = '🌟' + originalTitle;
           }
+        }
+      };
 
-          // 只在第一次访问时显示说明
-          if (isFirstVisit) {
-            addMessage('💡 说明：\n• 任意键聚焦输入框\n• 按 ESC 清空聊天记录');
-            // 标记已访问
-            localStorage.setItem('chatHasVisited', 'true');
-          }
-        };
+      ws.onclose = () => {
+        addMessage('❌ 已断开连接，正在尝试重连...');
 
-        ws.onmessage = (event) => {
-          const msg = JSON.parse(event.data);
-          if (msg.type === 'clientCount') {
-            clientCountSpan.textContent = msg.count;
-          } else if (msg.type === 'chat') {
-            addMessage(`💬 ${msg.content}`);
-
-            // 如果页面处于隐藏状态，显示提醒
-            if (document.hidden) {
-              hasUnread = true;
-              document.title = '🌟' + originalTitle;
+        // 设置重连定时器
+        if (!reconnectTimer) {
+          reconnectTimer = setInterval(() => {
+            if (ws.readyState === WebSocket.CLOSED) {
+              createWebSocket();
             }
+          }, 3000); // 每3秒尝试重连一次
+        }
+      };
+    }
+
+    // 检查是否是第一次访问
+    const isFirstVisit = !localStorage.getItem('chatHasVisited');
+
+    // 初始化连接
+    createWebSocket();
+
+    function sendMessage() {
+      const text = textareaField.value.trim();
+      if (!text)
+        return;
+
+
+      // 检查连接状态
+      if (ws.readyState !== WebSocket.OPEN) {
+        addMessage('❌ 已断开连接，请刷新页面重试');
+        return;
+      }
+
+      const message = {
+        type: 'chat',
+        content: text
+      };
+      ws.send(JSON.stringify(message));
+      addMessage(`👤 ${text}`);
+      textareaField.value = '';
+    }
+
+    function addMessage(text) {
+      const div = document.createElement('div');
+
+      // 创建消息内容元素
+      const messageContent = document.createElement('span');
+      messageContent.className = 'message-content';
+      messageContent.textContent = text;
+
+      // 创建时间元素
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'message-time';
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      timeSpan.textContent = `${hours}:${minutes}`;
+
+      // 添加内容和时间到消息div
+      div.appendChild(timeSpan);
+      div.appendChild(messageContent);
+
+      // 如果消息是自己发送的，添加data-self属性
+      if (text.startsWith('👤')) {
+        div.setAttribute('data-self', 'true');
+      }
+
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // 添加清空消息的函数
+    function clearMessages() {
+      messagesDiv.innerHTML = '';
+      // addMessage('🔄 聊天记录已清空');
+    }
+
+    // Enter 键发送消息
+    textareaField.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // 添加全局键盘事件监听器，当按下任意键时聚焦输入框
+    document.addEventListener('keydown', (e) => { // 检测 ESC 键
+      if (e.key === 'Escape') {
+        clearMessages();
+        return;
+      }
+
+      // 如果当前焦点不在输入框上，且不是在输入其他表单元素中
+      if (document.activeElement !== textareaField && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+        textareaField.focus();
+      }
+    });
+    // 检查页面可见性变化
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) { // 页面重新激活时，恢复原始标题
+        document.title = originalTitle;
+        hasUnread = false;
+      }
+    });
+  </script>
+
+<!-- 烟花动效 -->
+  <script>
+    ;
+    (function () { // 动态创建 canvas 元素
+      const canvas = document.createElement('canvas')
+      canvas.id = 'fireworks'
+      Object.assign(canvas.style, {
+        display: 'block',
+        opacity: 0, // 初始透明度为 0
+        transition: 'opacity 1s ease', // 添加透明度过渡效果，时长 1 秒
+        'pointer-events': 'none'
+      })
+      document.body.appendChild(canvas)
+
+      const ctx = canvas.getContext('2d')
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+      })
+
+      class Firework {
+        constructor() {
+          this.x = Math.random() * canvas.width
+          this.y = canvas.height
+          this.targetY = Math.random() * canvas.height * 0.3
+          this.speed = Math.random() * 6 + 4 // 增加速度范围
+          this.color = `hsl(${Math.random() * 360
+            }, 100%, 50%)`
+        }
+
+        update() {
+          this.y -= this.speed
+          if (this.y <= this.targetY) {
+            explode(this.x, this.y, this.color)
+            return true
           }
-        };
+          return false
+        }
 
-        ws.onclose = () => {
-          addMessage('❌ 已断开连接，正在尝试重连...');
+        draw() {
+          ctx.beginPath()
+          ctx.fillStyle = this.color
+          ctx.arc(this.x, this.y, 3, 0, Math.PI * 2)
+          ctx.fill()
+        }
+      }
 
-          // 设置重连定时器
-          if (!reconnectTimer) {
-            reconnectTimer = setInterval(() => {
-              if (ws.readyState === WebSocket.CLOSED) {
-                createWebSocket();
-              }
-            }, 3000); // 每3秒尝试重连一次
+      class Particle {
+        constructor(x, y, color) {
+          this.x = x
+          this.y = y
+          this.color = color
+          this.speed = {
+            x: (Math.random() - 0.5) * 8,
+            y: (Math.random() - 0.5) * 8
           }
-        };
+          this.alpha = 1
+          this.fade = 0.01
+        }
+
+        update() {
+          this.x += this.speed.x
+          this.y += this.speed.y
+          this.alpha -= this.fade
+        }
+
+        draw() {
+          ctx.globalAlpha = this.alpha
+          ctx.beginPath()
+          ctx.fillStyle = this.color
+          ctx.arc(this.x, this.y, 2, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.globalAlpha = 1
+        }
       }
 
-      // 检查是否是第一次访问
-      const isFirstVisit = !localStorage.getItem('chatHasVisited');
+      const fireworks = []
+      const particles = []
+      let shouldStop = false
+      let animationId
 
-      // 初始化连接
-      createWebSocket();
-
-      function sendMessage() {
-        const text = textareaField.value.trim();
-        if (!text) return;
-
-        // 检查连接状态
-        if (ws.readyState !== WebSocket.OPEN) {
-          addMessage('❌ 已断开连接，请刷新页面重试');
-          return;
+      function explode(x, y, color) {
+        for (let i = 0; i < 100; i++) {
+          particles.push(new Particle(x, y, color))
         }
-
-        const message = {
-          type: 'chat',
-          content: text,
-        };
-        ws.send(JSON.stringify(message));
-        addMessage(`👤 ${text}`);
-        textareaField.value = '';
       }
 
-      function addMessage(text) {
-        const div = document.createElement('div');
+      function animate() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-        // 创建消息内容元素
-        const messageContent = document.createElement('span');
-        messageContent.className = 'message-content';
-        messageContent.textContent = text;
-
-        // 创建时间元素
-        const timeSpan = document.createElement('span');
-        timeSpan.className = 'message-time';
-        const now = new Date();
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        timeSpan.textContent = `${hours}:${minutes}`;
-
-        // 添加内容和时间到消息div
-        div.appendChild(timeSpan);
-        div.appendChild(messageContent);
-
-        // 如果消息是自己发送的，添加data-self属性
-        if (text.startsWith('👤')) {
-          div.setAttribute('data-self', 'true');
+        if (!shouldStop && Math.random() < 0.02) {
+          fireworks.push(new Firework())
         }
 
-        messagesDiv.appendChild(div);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+          if (fireworks[i].update()) {
+            fireworks.splice(i, 1)
+          } else {
+            fireworks[i].draw()
+          }
+        }
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          particles[i].update()
+          if (particles[i].alpha <= 0) {
+            particles.splice(i, 1)
+          } else {
+            particles[i].draw()
+          }
+        }
+
+        if (shouldStop && fireworks.length === 0 && particles.length === 0) {
+          cancelAnimationFrame(animationId)
+          canvas.style.opacity = 0 // 烟花结束，画布淡出
+          return
+        }
+
+        animationId = requestAnimationFrame(animate)
       }
 
-      // 添加清空消息的函数
-      function clearMessages() {
-        messagesDiv.innerHTML = '';
-        //   addMessage('🔄 聊天记录已清空');
+      // 抽离状态重置逻辑到单独的函数
+      function resetState() {
+        // 清空烟花和粒子数组
+        fireworks.length = 0
+        particles.length = 0
+        // 重置停止标记
+        shouldStop = false
+        // 清除动画帧
+        if (animationId) {
+          cancelAnimationFrame(animationId)
+        }
       }
 
-      // Enter 键发送消息
-      textareaField.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
-        }
-      });
+      window.showFireworks = function (time) {
+        // 调用重置状态函数
+        resetState()
+        // 显示画布
+        canvas.style.opacity = 1
+        // 启动新动画
+        animate()
+        // 设置停止时间
+        setTimeout(() => {
+          shouldStop = true
+        }, time)
+      }
+    })()</script>
+</body>
+</body>
+</body>
 
-      // 添加全局键盘事件监听器，当按下任意键时聚焦输入框
-      document.addEventListener('keydown', (e) => {
-        // 检测 ESC 键
-        if (e.key === 'Escape') {
-          clearMessages();
-          return;
-        }
-
-        // 如果当前焦点不在输入框上，且不是在输入其他表单元素中
-        if (
-          document.activeElement !== textareaField &&
-          !['INPUT', 'TEXTAREA', 'SELECT'].includes(
-            document.activeElement.tagName
-          )
-        ) {
-          textareaField.focus();
-        }
-      });
-      // 检查页面可见性变化
-      document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) {
-          // 页面重新激活时，恢复原始标题
-          document.title = originalTitle;
-          hasUnread = false;
-        }
-      });
-    </script>
-  </body>
 </html>
