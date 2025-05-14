@@ -101,8 +101,6 @@ function handleClientMessage(ws, message) {
 
 // 处理新的客户端连接
 function handleNewConnection(ws) {
-  console.log('New client connected');
-
   // 将新客户端添加到客户端集合中
   clients.add(ws);
 
