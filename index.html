@@ -321,8 +321,13 @@
         if (msg.type === 'clientCount') {
           clientCountSpan.textContent = msg.count;
         } else if (msg.type === 'chat') {
-          addMessage(`💬 ${msg.content
-            }`);
+          addMessage(`💬 ${msg.content}`);
+
+          // 如果消息内容为“烟花”，调用 showFireworks 函数
+          if (msg.content === '烟花') {
+            // showFireworks(5000); // 播放烟花效果5秒
+            fireworksMgr.play()
+          }
 
           // 如果页面处于隐藏状态，显示提醒
           if (document.hidden) {
@@ -354,14 +359,17 @@
 
     function sendMessage() {
       const text = textareaField.value.trim();
-      if (!text)
-        return;
-
+      if (!text) return;
 
       // 检查连接状态
       if (ws.readyState !== WebSocket.OPEN) {
         addMessage('❌ 已断开连接，请刷新页面重试');
         return;
+      }
+
+      // 如果消息内容为“烟花”，调用 showFireworks 函数
+      if (text === '烟花') {
+        fireworksMgr.play()
       }
 
       const message = {
@@ -405,7 +413,6 @@
     // 添加清空消息的函数
     function clearMessages() {
       messagesDiv.innerHTML = '';
-      // addMessage('🔄 聊天记录已清空');
     }
 
     // Enter 键发送消息
@@ -433,13 +440,47 @@
       if (!document.hidden) { // 页面重新激活时，恢复原始标题
         document.title = originalTitle;
         hasUnread = false;
+
+        fireworksMgr.playCache()
       }
     });
   </script>
 
-<!-- 烟花动效 -->
+  <!-- 烟花管理 -->
   <script>
-    ;
+    ; (() => {
+      let cache = false
+      const duration = 3000
+
+      function play() {
+        if (!document.hidden) {
+          window.showFireworks(duration)
+          return
+        }
+
+        if (cache) return
+        cache = true
+      }
+
+      function playCache() {
+        if (!cache) return
+
+        window.showFireworks(duration)
+        setTimeout(() => {
+          cache = false
+        }, duration)
+      }
+
+      window.fireworksMgr = {
+        play,
+        playCache,
+      }
+    })()
+  </script>
+
+  <!-- 烟花动效 -->
+  <script>
+      ;
     (function () { // 动态创建 canvas 元素
       const canvas = document.createElement('canvas')
       canvas.id = 'fireworks'
@@ -447,7 +488,11 @@
         display: 'block',
         opacity: 0, // 初始透明度为 0
         transition: 'opacity 1s ease', // 添加透明度过渡效果，时长 1 秒
-        'pointer-events': 'none'
+        'pointer-events': 'none',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 9999
       })
       document.body.appendChild(canvas)
 
