@@ -64,7 +64,7 @@
   // 初始化连接
   createWebSocket();
 
-  function sendMessage() {
+  window.sendMessage = () => {
     const text = textareaField.value.trim();
     if (!text) return;
 
@@ -81,7 +81,7 @@
     ws.send(JSON.stringify(message));
     addMessage(`👤 ${text}`);
     textareaField.value = '';
-  }
+  };
 
   function addMessage(text) {
     const div = document.createElement('div');
