@@ -24,6 +24,8 @@
     playing = true;
 
     while (queue.length) {
+      if (document.hidden) return;
+
       const { cb, params } = queue.shift();
       await cb(params);
       console.log('play end, will next');
