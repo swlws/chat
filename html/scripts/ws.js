@@ -110,6 +110,9 @@
 
     messagesDiv.appendChild(div);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    // 分发动画
+    window.dispatchAnimation(text);
   }
 
   // 添加清空消息的函数
@@ -141,6 +144,7 @@
       textareaField.focus();
     }
   });
+
   // 检查页面可见性变化
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {

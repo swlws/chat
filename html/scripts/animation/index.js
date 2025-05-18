@@ -7,9 +7,9 @@
    * @param {*} animation
    */
   function addAnimation(animation) {
-    console.log('addAnimation', animation);
     queue.push(animation);
 
+    if (document.hidden) return;
     emitAnimation();
   }
 
@@ -23,7 +23,6 @@
     if (playing) return;
     playing = true;
 
-    console.log('emitAnimation');
     while (queue.length) {
       const { cb, params } = queue.shift();
       await cb(params);
@@ -39,10 +38,9 @@
    * @returns
    */
   window.dispatchAnimation = (message) => {
-    console.log('dispatchAnimation', message, /^烟花$/.test(message));
     if (!message) return;
 
-    if (/^烟花$/.test(message)) {
+    if (/烟花/.test(message)) {
       addAnimation({ cb: window.FireworkModule.play, params: { time: 5000 } });
     }
 
@@ -50,4 +48,10 @@
       addAnimation({ cb: window.StarFallModule.play });
     }
   };
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      emitAnimation();
+    }
+  });
 })();
