@@ -10,7 +10,7 @@
 
   // 创建 WebSocket 连接的函数
   function createWebSocket() {
-    ws = new WebSocket(`wss://swlws.site/chat`);
+    ws = new WebSocket(`wss://swlws.site/api-ws`);
 
     ws.onopen = () => {
       addMessage('🔌 已连接到服务器');

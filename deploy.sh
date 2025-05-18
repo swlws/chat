@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # 定义远程服务器信息
-REMOTE_HOST="root@119.91.217.77"
+REMOTE_HOST="root@swlws.site"
 REMOTE_PATH="/root/swlws/chat"
+REMOTE_WEB_PATH="/var/www/chat"
 
 # 确保远程目录存在
 ssh $REMOTE_HOST "mkdir -p $REMOTE_PATH"
+ssh $REMOTE_HOST "rm -rf $REMOTE_WEB_PATH && mkdir -p $REMOTE_WEB_PATH"
 
 # 同步文件到远程服务器
 echo "正在同步文件到远程服务器..."
@@ -17,6 +19,9 @@ rsync -avz --exclude 'node_modules' \
 # 在远程服务器上执行部署
 echo "正在远程服务器上执行部署..."
 ssh $REMOTE_HOST "cd $REMOTE_PATH && \
+    # 移动文件到web目录
+    mv ./html/* $REMOTE_WEB_PATH/ && \
+    
     # 安装依赖
     npm install && \
     

@@ -5,17 +5,17 @@ const WebSocket = require('ws');
 
 // 创建 HTTP 服务
 const server = http.createServer((req, res) => {
-  if (req.url === '/') {
-    const htmlPath = path.join(__dirname, 'index.html');
-    fs.readFile(htmlPath, (err, data) => {
-      if (err) {
-        res.writeHead(500);
-        return res.end('Error loading index.html');
-      }
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(data);
-    });
-  }
+  // if (req.url === '/') {
+  //   const htmlPath = path.join(__dirname, 'index.html');
+  //   fs.readFile(htmlPath, (err, data) => {
+  //     if (err) {
+  //       res.writeHead(500);
+  //       return res.end('Error loading index.html');
+  //     }
+  //     res.writeHead(200, { 'Content-Type': 'text/html' });
+  //     res.end(data);
+  //   });
+  // }
 });
 
 // 定义消息类型枚举
