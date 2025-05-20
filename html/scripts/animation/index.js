@@ -46,7 +46,7 @@
       addAnimation({ cb: window.FireworkModule.play, params: { time: 5000 } });
     }
 
-    if (/520/.test(message)) {
+    if (/520|惊喜/.test(message)) {
       addAnimation({ cb: window.StarFallModule.play });
     }
   };
