@@ -23,7 +23,7 @@
 
       // 只在第一次访问时显示说明
       if (isFirstVisit) {
-        addMessage('💡 说明：\n• 任意键聚焦输入框\n• 按 ESC 清空聊天记录');
+        addMessage('💡 说明：\n• 空格键聚焦输入框\n• 按 ESC 清空聊天记录');
         // 标记已访问
         localStorage.setItem('chatHasVisited', 'true');
       }
@@ -128,7 +128,7 @@
     }
   });
 
-  // 添加全局键盘事件监听器，当按下任意键时聚焦输入框
+  // 添加全局键盘事件监听器，当按下空格键时聚焦输入框
   document.addEventListener('keydown', (e) => {
     // 检测 ESC 键
     if (e.key === 'Escape') {
@@ -136,12 +136,15 @@
       return;
     }
 
-    // 如果当前焦点不在输入框上，且不是在输入其他表单元素中
-    if (
-      document.activeElement !== textareaField &&
-      !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)
-    ) {
-      textareaField.focus();
+    // 检测空格键
+    if (e.key === ' ') {
+      // 如果当前焦点不在输入框上，且不是在输入其他表单元素中
+      if (
+        document.activeElement !== textareaField &&
+        !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)
+      ) {
+        textareaField.focus();
+      }
     }
   });
 
